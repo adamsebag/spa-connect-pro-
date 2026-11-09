@@ -1,0 +1,3024 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#304f42">
+
+<title>SpaConnect</title>
+
+<style>
+
+:root {
+  --gold:#b18b57;
+  --green:#496b5b;
+  --dark:#304f42;
+  --cream:#f8f6f1;
+  --red:#bd5a55;
+  --text:#343a35;
+  --white:#ffffff;
+}
+
+* {
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body {
+  margin:0;
+  background:var(--cream);
+  color:var(--text);
+}
+
+header {
+  background:white;
+  padding:20px;
+  text-align:center;
+  color:var(--gold);
+  font-size:27px;
+  font-weight:bold;
+  box-shadow:0 2px 12px #0001;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.container {
+  max-width:850px;
+  margin:auto;
+  padding:20px 16px 110px;
+}
+
+.page {
+  display:none;
+}
+
+.page.active {
+  display:block;
+}
+
+h2,h3 {
+  color:var(--green);
+}
+
+.card {
+  background:white;
+  padding:20px;
+  margin:15px 0;
+  border-radius:17px;
+  box-shadow:0 4px 18px #00000009;
+  border:1px solid #eeeae2;
+}
+
+.summary {
+  background:linear-gradient(135deg,var(--green),var(--dark));
+  color:white;
+  padding:25px;
+  border-radius:20px;
+  margin:18px 0;
+}
+
+.summary h1 {
+  color:#f4dfb8;
+  font-size:34px;
+}
+
+label {
+  display:block;
+  font-weight:bold;
+  margin-top:15px;
+  font-size:14px;
+}
+
+input,select {
+  width:100%;
+  padding:13px;
+  margin-top:7px;
+  border:1px solid #e3dfd6;
+  border-radius:10px;
+  font-size:16px;
+  background:white;
+  color:var(--text);
+}
+
+input[type=checkbox] {
+  width:20px;
+  height:20px;
+}
+
+button {
+  border:0;
+  border-radius:10px;
+  padding:13px 15px;
+  background:var(--gold);
+  color:white;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:active {
+  opacity:.8;
+}
+
+.main-button,
+.save-button {
+  width:100%;
+  margin-top:12px;
+  min-height:45px;
+}
+
+.secondary {
+  background:#eee8de;
+  color:#55452f;
+}
+
+.edit {
+  background:var(--green);
+  margin:5px;
+}
+
+.delete {
+  background:var(--red);
+  margin:5px;
+}
+
+.small {
+  color:#85877f;
+  font-size:13px;
+}
+
+.total {
+  color:var(--green);
+  font-size:24px;
+  font-weight:bold;
+}
+
+.price-preview {
+  background:#f7f5ef;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+.stat-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:12px 0;
+}
+
+.divider {
+  border-top:1px solid #eee;
+  margin:15px 0;
+}
+
+.check-row {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:12px 0;
+}
+
+.empty {
+  text-align:center;
+  padding:25px;
+  color:#85877f;
+}
+
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:white;
+  box-shadow:0 -3px 15px #0001;
+  padding:9px 3px calc(9px + env(safe-area-inset-bottom));
+  z-index:20;
+}
+
+nav button {
+  flex:1;
+  background:transparent;
+  color:#888;
+  font-size:12px;
+  padding:8px 2px;
+}
+
+nav button.active {
+  color:var(--gold);
+  background:#f8f4ec;
+}
+
+@media(max-width:500px) {
+  .card {
+    padding:15px;
+  }
+
+  nav button {
+    font-size:10px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>✨ SpaConnect</header>
+
+<div class="container">
+
+<!-- ================================== -->
+<!-- PAGE 1 : ACCUEIL -->
+<!-- ================================== -->
+
+<section id="home" class="page active">
+
+  <h2>שלום וברוך הבא!</h2>
+
+  <div class="summary">
+
+    <div>ההכנסות שלי החודש</div>
+
+    <h1 id="homeTotal">0 ₪</h1>
+
+    <p id="homeCount">0 עיסויים</p>
+
+    <p id="homeSpas">0 ספאים</p>
+
+  </div>
+
+  <div class="card">
+
+    <h3>הפעולות שלי</h3>
+
+    <button class="main-button"
+      onclick="newMassage()">
+      ➕ הוספת עיסוי
+    </button>
+
+    <button class="main-button secondary"
+      onclick="showPage('spas')">
+      🏨 ניהול הספאים שלי
+    </button>
+
+    <button class="main-button secondary"
+      onclick="showPage('reports')">
+      📊 דוחות חודשיים לפי ספא
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <h3>הכנסות לפי ספא החודש</h3>
+
+    <div id="homeSpaList"></div>
+
+  </div>
+
+  <div class="card">
+
+    <h3>ניהול נתונים וגיבויים</h3>
+
+    <button class="main-button"
+      onclick="exportBackup()">
+      💾 יצירת גיבוי
+    </button>
+
+    <label>שחזור מגיבוי</label>
+
+    <input
+      type="file"
+      id="backupFile"
+      accept=".json,application/json"
+      onchange="importBackup(event)">
+
+    <button class="main-button secondary"
+      onclick="exportAllMassages()">
+      📊 ייצוא כל העיסויים
+    </button>
+
+    <button class="main-button delete"
+      onclick="deleteAllData()">
+      🗑️ מחיקת כל הנתונים
+    </button>
+
+  </div>
+
+</section>
+
+<!-- ================================== -->
+<!-- PAGE 2 : SPAS -->
+<!-- ================================== -->
+
+<section id="spas" class="page">
+
+  <h2>הספאים שלי</h2>
+
+  <div class="card">
+
+    <h3 id="spaFormTitle">הוספת ספא חדש</h3>
+
+    <input
+      type="hidden"
+      id="editingSpaId">
+
+    <label>שם הספא</label>
+
+    <input
+      id="spaName"
+      placeholder="שם הספא">
+
+    <label>תשלום עבור כל דקת עיסוי (₪)</label>
+
+    <input
+      id="spaRate"
+      type="number"
+      min="0"
+      step="0.01"
+      value="1">
+
+    <div class="price-preview">
+
+      <strong>מחיר הטיפול לפי משך</strong>
+
+      <div id="spaPricePreview"></div>
+
+    </div>
+
+    <button class="save-button"
+      onclick="saveSpa()">
+      שמירת ספא
+    </button>
+
+    <button class="save-button secondary"
+      onclick="resetSpaForm()">
+      ביטול
+    </button>
+
+  </div>
+
+  <h3>רשימת הספאים</h3>
+
+  <div id="spaList"></div>
+
+</section>
+
+<!-- ================================== -->
+<!-- PAGE 3 : AJOUT MASSAGE -->
+<!-- ================================== -->
+
+<section id="addMassage" class="page">
+
+  <h2 id="massageFormTitle">הוספת עיסוי</h2>
+
+  <div class="card">
+
+    <input
+      type="hidden"
+      id="editingMassageId">
+
+    <label>בחירת ספא</label>
+
+    <select id="massageSpa"></select>
+
+    <label>סוג העיסוי</label>
+
+    <select id="massageType">
+
+      <option>עיסוי שוודי</option>
+      <option>עיסוי רקמות עמוק</option>
+      <option>עיסוי ספורטיבי</option>
+      <option>עיסוי באבנים חמות</option>
+      <option>עיסוי מרגיע</option>
+      <option>עיסוי משולב</option>
+      <option>עיסוי אחר</option>
+
+    </select>
+
+    <label>משך הטיפול</label>
+
+    <select id="massageDuration">
+
+      <option value="30">30 דקות</option>
+      <option value="45">45 דקות</option>
+      <option value="50">50 דקות</option>
+      <option value="60" selected>60 דקות</option>
+      <option value="90">90 דקות</option>
+
+    </select>
+
+    <div class="price-preview">
+
+      <div>תשלום לדקה</div>
+
+      <h3 id="selectedRate">0 ₪</h3>
+
+      <div>סך התשלום</div>
+
+      <h2 class="total" id="massagePrice">0 ₪</h2>
+
+    </div>
+
+    <label>תאריך הטיפול</label>
+
+    <input
+      id="massageDate"
+      type="date">
+
+    <label>שעת ביצוע העיסוי</label>
+
+    <input
+      id="massageTime"
+      type="time">
+
+    <button class="save-button"
+      onclick="saveMassage()">
+      שמירת עיסוי
+    </button>
+
+    <button class="save-button secondary"
+      onclick="cancelMassageEdit()">
+      ביטול
+    </button>
+
+  </div>
+
+</section>
+
+<!-- ================================== -->
+<!-- PAGE 4 : RAPPORTS -->
+<!-- ================================== -->
+
+<section id="reports" class="page">
+
+  <h2>📊 דוחות חודשיים לפי ספא</h2>
+
+  <div class="card">
+
+    <label>בחירת ספא</label>
+
+    <select id="reportSpa"></select>
+
+    <label>בחירת חודש</label>
+
+    <input
+      type="month"
+      id="reportMonth">
+
+  </div>
+
+  <div id="spaMonthlyReport"></div>
+
+  <button class="main-button"
+    onclick="exportSpaReport()">
+    📥 ייצוא דוח חודשי
+  </button>
+
+</section>
+
+</div>
+
+<!-- ================================== -->
+<!-- NAVIGATION -->
+<!-- ================================== -->
+
+<nav>
+
+  <button id="nav-home"
+    class="active"
+    onclick="showPage('home')">
+    🏠<br>ראשי
+  </button>
+
+  <button id="nav-spas"
+    onclick="showPage('spas')">
+    🏨<br>הספאים
+  </button>
+
+  <button id="nav-addMassage"
+    onclick="newMassage()">
+    💆<br>עיסוי חדש
+  </button>
+
+  <button id="nav-reports"
+    onclick="showPage('reports')">
+    📊<br>דוחות
+  </button>
+
+</nav>
+
+<!-- LE SCRIPT COMMENCE EN PARTIE 2 -->
+
+</body>
+</html>
+
+<script>
+
+// ======================================
+// 1. DONNEES ET SAUVEGARDE
+// ======================================
+
+function loadData(key) {
+  try {
+    const data = JSON.parse(
+      localStorage.getItem(key) || '[]'
+    );
+
+    return Array.isArray(data) ? data : [];
+
+  } catch(error) {
+    return [];
+  }
+}
+
+let spas = loadData('spa_spas');
+let massages = loadData('spa_massages');
+
+const durations = [30,45,50,60,90];
+
+function saveData() {
+
+  try {
+
+    localStorage.setItem(
+      'spa_spas',
+      JSON.stringify(spas)
+    );
+
+    localStorage.setItem(
+      'spa_massages',
+      JSON.stringify(massages)
+    );
+
+    return true;
+
+  } catch(error) {
+
+    alert('שגיאה בשמירת הנתונים');
+
+    return false;
+
+  }
+}
+
+// ======================================
+// 2. DATE ET MONNAIE
+// ======================================
+
+function localDateString() {
+
+  const d = new Date();
+
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+
+}
+
+function money(value) {
+
+  return Number(value || 0).toLocaleString('he-IL',{
+    minimumFractionDigits:0,
+    maximumFractionDigits:2
+  }) + ' ₪';
+
+}
+
+function roundMoney(value) {
+
+  return Math.round(
+    (Number(value)+Number.EPSILON)*100
+  )/100;
+
+}
+
+function escapeHTML(value) {
+
+  return String(value).replace(/[&<>"']/g,c=>({
+
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+
+  }[c]));
+
+}
+
+// ======================================
+// 3. NAVIGATION
+// ======================================
+
+function showPage(page) {
+
+  document.querySelectorAll('.page').forEach(p=>{
+    p.classList.remove('active');
+  });
+
+  document.getElementById(page).classList.add('active');
+
+  document.querySelectorAll('nav button').forEach(b=>{
+    b.classList.remove('active');
+  });
+
+  const button = document.getElementById('nav-'+page);
+
+  if(button) {
+    button.classList.add('active');
+  }
+
+  render();
+
+}
+
+// ======================================
+// 4. APERCU DES TARIFS
+// ======================================
+
+function updateSpaPreview() {
+
+  const rate = Number(
+    document.getElementById('spaRate').value
+  );
+
+  const preview = document.getElementById(
+    'spaPricePreview'
+  );
+
+  if(!Number.isFinite(rate) || rate<=0) {
+
+    preview.textContent = 'נא להזין תשלום תקין';
+
+    return;
+  }
+
+  preview.innerHTML = durations.map(d=>`
+
+    <div class="stat-row">
+
+      <span>${d} דקות</span>
+
+      <strong>
+        ${money(roundMoney(d*rate))}
+      </strong>
+
+    </div>
+
+  `).join('');
+
+}
+
+// ======================================
+// 5. AJOUTER OU MODIFIER UN SPA
+// ======================================
+
+function saveSpa() {
+
+  const name = document.getElementById(
+    'spaName'
+  ).value.trim();
+
+  const rate = Number(
+    document.getElementById('spaRate').value
+  );
+
+  const editingId = document.getElementById(
+    'editingSpaId'
+  ).value;
+
+  if(!name) {
+
+    alert('נא להזין שם ספא');
+
+    return;
+  }
+
+  if(!Number.isFinite(rate) || rate<=0) {
+
+    alert('נא להזין תשלום תקין לדקה');
+
+    return;
+  }
+
+  if(editingId) {
+
+    const spa = spas.find(s=>s.id===editingId);
+
+    if(spa) {
+
+      spa.name = name;
+      spa.rate = rate;
+
+    }
+
+  } else {
+
+    spas.push({
+
+      id:Date.now().toString()+'_'+
+        Math.random().toString(36).slice(2),
+
+      name:name,
+
+      rate:rate
+
+    });
+
+  }
+
+  if(!saveData()) return;
+
+  resetSpaForm();
+
+  render();
+
+  alert('הספא נשמר בהצלחה!');
+
+}
+
+// ======================================
+// 6. MODIFIER UN SPA
+// ======================================
+
+function editSpa(id) {
+
+  const spa = spas.find(s=>s.id===id);
+
+  if(!spa) return;
+
+  document.getElementById(
+    'editingSpaId'
+  ).value = id;
+
+  document.getElementById(
+    'spaName'
+  ).value = spa.name;
+
+  document.getElementById(
+    'spaRate'
+  ).value = spa.rate;
+
+  document.getElementById(
+    'spaFormTitle'
+  ).textContent = 'עריכת ספא';
+
+  updateSpaPreview();
+
+  showPage('spas');
+
+}
+
+// ======================================
+// 7. REINITIALISER LE FORMULAIRE SPA
+// ======================================
+
+function resetSpaForm() {
+
+  document.getElementById(
+    'editingSpaId'
+  ).value = '';
+
+  document.getElementById(
+    'spaName'
+  ).value = '';
+
+  document.getElementById(
+    'spaRate'
+  ).value = '1';
+
+  document.getElementById(
+    'spaFormTitle'
+  ).textContent = 'הוספת ספא חדש';
+
+  updateSpaPreview();
+
+}
+
+// ======================================
+// 8. SUPPRIMER LE TARIF D'UN SPA
+// ======================================
+
+function deleteSpaRate(id) {
+
+  const spa = spas.find(s=>s.id===id);
+
+  if(!spa) return;
+
+  if(!confirm('למחוק את התעריף של הספא?')) {
+    return;
+  }
+
+  spa.rate = 0;
+
+  if(!saveData()) return;
+
+  render();
+
+  alert('התעריף נמחק!');
+
+}
+
+// ======================================
+// 9. SUPPRIMER UN SPA
+// ======================================
+
+function deleteSpa(id) {
+
+  if(massages.some(m=>m.spaId===id)) {
+
+    alert(
+      'לא ניתן למחוק ספא שיש לו עיסויים רשומים.'
+    );
+
+    return;
+  }
+
+  if(!confirm('למחוק את הספא?')) {
+    return;
+  }
+
+  spas = spas.filter(s=>s.id!==id);
+
+  if(!saveData()) return;
+
+  render();
+
+  alert('הספא נמחק בהצלחה!');
+
+}
+
+// ======================================
+// FIN PARTIE 2
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. CALCUL AUTOMATIQUE DU PRIX
+// ======================================
+
+function updateMassagePrice() {
+
+  const spaId =
+    document.getElementById('massageSpa').value;
+
+  const duration =
+    Number(document.getElementById('massageDuration').value);
+
+  const spa = spas.find(s=>s.id===spaId);
+
+  const rate = spa ? Number(spa.rate) : 0;
+
+  document.getElementById('selectedRate').textContent =
+    money(rate) + ' לדקה';
+
+  document.getElementById('massagePrice').textContent =
+    money(roundMoney(duration * rate));
+
+}
+
+// ======================================
+// 2. NOUVEAU MASSAGE
+// ======================================
+
+function newMassage() {
+
+  if(!spas.length) {
+
+    alert('נא להוסיף ספא תחילה');
+
+    showPage('spas');
+
+    return;
+  }
+
+  document.getElementById(
+    'editingMassageId'
+  ).value = '';
+
+  document.getElementById(
+    'massageFormTitle'
+  ).textContent = 'הוספת עיסוי';
+
+  document.getElementById(
+    'massageDuration'
+  ).value = '60';
+
+  document.getElementById(
+    'massageType'
+  ).selectedIndex = 0;
+
+  document.getElementById(
+    'massageDate'
+  ).value = localDateString();
+
+  // Heure actuelle proposée automatiquement
+  const now = new Date();
+
+  document.getElementById(
+    'massageTime'
+  ).value =
+    String(now.getHours()).padStart(2,'0') +
+    ':' +
+    String(now.getMinutes()).padStart(2,'0');
+
+  document.getElementById(
+    'massageSpa'
+  ).selectedIndex = 0;
+
+  showPage('addMassage');
+
+  updateMassagePrice();
+
+}
+
+// ======================================
+// 3. NOUVEAU MASSAGE POUR UN SPA PRECIS
+// ======================================
+
+function newMassageForSpa(id) {
+
+  newMassage();
+
+  if(
+    document.getElementById('addMassage')
+    .classList.contains('active')
+  ) {
+
+    document.getElementById(
+      'massageSpa'
+    ).value = id;
+
+    updateMassagePrice();
+
+  }
+
+}
+
+// ======================================
+// 4. ENREGISTRER UN MASSAGE
+// ======================================
+
+function saveMassage() {
+
+  const spaId =
+    document.getElementById('massageSpa').value;
+
+  const spa = spas.find(s=>s.id===spaId);
+
+  if(!spa) {
+
+    alert('נא לבחור ספא');
+
+    return;
+  }
+
+  const editingId =
+    document.getElementById('editingMassageId').value;
+
+  const oldMassage = editingId
+    ? massages.find(m=>m.id===editingId)
+    : null;
+
+  if(editingId && !oldMassage) {
+
+    alert('העיסוי לא נמצא');
+
+    return;
+  }
+
+  const rate = oldMassage && oldMassage.spaId===spaId
+    ? Number(oldMassage.rate)
+    : Number(spa.rate);
+
+  if(!Number.isFinite(rate) || rate<=0) {
+
+    alert('נא להגדיר תעריף תקין לספא');
+
+    return;
+  }
+
+  const duration = Number(
+    document.getElementById('massageDuration').value
+  );
+
+  const date = document.getElementById(
+    'massageDate'
+  ).value;
+
+  const time = document.getElementById(
+    'massageTime'
+  ).value;
+
+  const type = document.getElementById(
+    'massageType'
+  ).value;
+
+  if(!date) {
+
+    alert('נא לבחור תאריך');
+
+    return;
+  }
+
+  if(!time || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+
+    alert('נא לבחור שעת עיסוי תקינה');
+
+    return;
+  }
+
+  if(!durations.includes(duration)) {
+
+    alert('נא לבחור משך טיפול תקין');
+
+    return;
+  }
+
+  const massage = {
+
+    id: editingId ||
+      Date.now().toString() + '_' +
+      Math.random().toString(36).slice(2),
+
+    spaId: spaId,
+
+    type: type,
+
+    duration: duration,
+
+    rate: rate,
+
+    price: roundMoney(duration * rate),
+
+    date: date,
+
+    time: time
+
+  };
+
+  if(editingId) {
+
+    const index = massages.findIndex(
+      m=>m.id===editingId
+    );
+
+    if(index!==-1) {
+
+      massages[index] = massage;
+
+    }
+
+  } else {
+
+    massages.push(massage);
+
+  }
+
+  if(!saveData()) return;
+
+  document.getElementById(
+    'editingMassageId'
+  ).value = '';
+
+  alert(
+    editingId
+      ? 'העיסוי עודכן בהצלחה!'
+      : 'העיסוי נשמר בהצלחה!'
+  );
+
+  showPage('reports');
+
+}
+
+// ======================================
+// 5. MODIFIER UN MASSAGE
+// ======================================
+
+function editMassage(id) {
+
+  const m = massages.find(x=>x.id===id);
+
+  if(!m) return;
+
+  document.getElementById(
+    'editingMassageId'
+  ).value = m.id;
+
+  document.getElementById(
+    'massageFormTitle'
+  ).textContent = 'עריכת עיסוי';
+
+  document.getElementById(
+    'massageSpa'
+  ).value = m.spaId;
+
+  document.getElementById(
+    'massageType'
+  ).value = m.type;
+
+  document.getElementById(
+    'massageDuration'
+  ).value = String(m.duration);
+
+  document.getElementById(
+    'massageDate'
+  ).value = m.date;
+
+  document.getElementById(
+    'massageTime'
+  ).value = m.time || '';
+
+  showPage('addMassage');
+
+  updateMassagePrice();
+
+}
+
+// ======================================
+// 6. ANNULER LA MODIFICATION
+// ======================================
+
+function cancelMassageEdit() {
+
+  document.getElementById(
+    'editingMassageId'
+  ).value = '';
+
+  document.getElementById(
+    'massageFormTitle'
+  ).textContent = 'הוספת עיסוי';
+
+  showPage('home');
+
+}
+
+// ======================================
+// 7. SUPPRIMER UN MASSAGE
+// ======================================
+
+function deleteMassage(id) {
+
+  if(!confirm('למחוק את העיסוי?')) {
+    return;
+  }
+
+  massages = massages.filter(m=>m.id!==id);
+
+  if(!saveData()) return;
+
+  render();
+
+  alert('העיסוי נמחק בהצלחה!');
+
+}
+
+// ======================================
+// 8. AJOUTER PLUSIEURS MASSAGES
+// ======================================
+
+function addMultipleMassages() {
+
+  const count = Number(
+    prompt('כמה עיסויים להוסיף?')
+  );
+
+  if(
+    !Number.isInteger(count) ||
+    count<1 ||
+    count>100
+  ) {
+
+    alert('נא להזין מספר בין 1 ל-100');
+
+    return;
+  }
+
+  if(!spas.length) {
+
+    alert('נא להוסיף ספא תחילה');
+
+    return;
+  }
+
+  alert(
+    'אפשר להוסיף את העיסויים בזה אחר זה.'
+  );
+
+  newMassage();
+
+}
+
+// ======================================
+// FIN PARTIE 3
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. AFFICHAGE DE LA LISTE DES SPAS
+// ======================================
+
+function renderSpas() {
+
+  const list = document.getElementById('spaList');
+
+  if(!spas.length) {
+
+    list.innerHTML = `
+      <div class="card empty">
+        עדיין לא הוספת ספא
+      </div>
+    `;
+
+  } else {
+
+    list.innerHTML = spas.map(spa=>{
+
+      const count = massages.filter(
+        m=>m.spaId===spa.id
+      ).length;
+
+      const rate = Number(spa.rate)||0;
+
+      return `
+
+        <div class="card">
+
+          <h3>${escapeHTML(spa.name)}</h3>
+
+          <div class="stat-row">
+            <span>תשלום לדקה</span>
+
+            <strong>
+              ${rate>0 ? money(rate) : 'ללא תעריף'}
+            </strong>
+          </div>
+
+          <div class="stat-row">
+            <span>מספר עיסויים</span>
+
+            <strong>${count}</strong>
+          </div>
+
+          <div class="divider"></div>
+
+          <strong>מחיר לפי משך טיפול</strong>
+
+          ${durations.map(d=>`
+
+            <div class="stat-row">
+
+              <span>${d} דקות</span>
+
+              <strong>
+                ${rate>0 ? money(d*rate) : '—'}
+              </strong>
+
+            </div>
+
+          `).join('')}
+
+          <div class="divider"></div>
+
+          <button class="edit"
+            onclick="editSpa('${escapeHTML(spa.id)}')">
+            ✏️ עריכה
+          </button>
+
+          <button class="delete"
+            onclick="deleteSpaRate('${escapeHTML(spa.id)}')">
+            מחיקת תעריף
+          </button>
+
+          <button class="delete"
+            onclick="deleteSpa('${escapeHTML(spa.id)}')">
+            🗑️ מחיקת ספא
+          </button>
+
+          <button class="main-button"
+            onclick="newMassageForSpa('${escapeHTML(spa.id)}')">
+            ➕ הוספת עיסוי לספא זה
+          </button>
+
+        </div>
+
+      `;
+
+    }).join('');
+
+  }
+
+  updateSpaSelects();
+
+}
+
+// ======================================
+// 2. MISE A JOUR DES MENUS SPA
+// ======================================
+
+function updateSpaSelects() {
+
+  const select = document.getElementById(
+    'massageSpa'
+  );
+
+  const previous = select.value;
+
+  select.innerHTML = spas.map(spa=>`
+
+    <option value="${escapeHTML(spa.id)}">
+      ${escapeHTML(spa.name)}
+    </option>
+
+  `).join('');
+
+  if(spas.some(s=>s.id===previous)) {
+
+    select.value = previous;
+
+  }
+
+  const reportSelect = document.getElementById(
+    'reportSpa'
+  );
+
+  const previousReport = reportSelect.value;
+
+  reportSelect.innerHTML = spas.map(spa=>`
+
+    <option value="${escapeHTML(spa.id)}">
+      ${escapeHTML(spa.name)}
+    </option>
+
+  `).join('');
+
+  if(spas.some(s=>s.id===previousReport)) {
+
+    reportSelect.value = previousReport;
+
+  }
+
+}
+
+// ======================================
+// 3. ACTUALISATION DES TARIFS
+// ======================================
+
+function refreshSpaPrices() {
+
+  updateSpaPreview();
+
+  updateMassagePrice();
+
+}
+
+// ======================================
+// 4. RECHERCHE D'UN SPA
+// ======================================
+
+function getSpaById(id) {
+
+  return spas.find(spa=>spa.id===id) || null;
+
+}
+
+// ======================================
+// 5. NOMBRE DE MASSAGES PAR SPA
+// ======================================
+
+function getSpaMassageCount(spaId) {
+
+  return massages.filter(
+    massage=>massage.spaId===spaId
+  ).length;
+
+}
+
+// ======================================
+// 6. REVENUS TOTAUX PAR SPA
+// ======================================
+
+function getSpaTotalRevenue(spaId) {
+
+  return roundMoney(
+
+    massages
+      .filter(m=>m.spaId===spaId)
+      .reduce(
+        (total,m)=>total+Number(m.price||0),
+        0
+      )
+
+  );
+
+}
+
+// ======================================
+// 7. FIN PARTIE 4
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. TABLEAU DE BORD
+// ======================================
+
+function renderHome() {
+
+  const currentMonth =
+    localDateString().slice(0,7);
+
+  // Massages du mois actuel
+
+  const monthly = massages.filter(m=>
+    String(m.date).slice(0,7)===currentMonth
+  );
+
+  // Revenus du mois
+
+  const total = roundMoney(
+    monthly.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+  // Nombre de spas utilisés
+
+  const spaIds = new Set(
+    monthly.map(m=>m.spaId)
+  );
+
+  // Affichage des statistiques
+
+  document.getElementById(
+    'homeTotal'
+  ).textContent = money(total);
+
+  document.getElementById(
+    'homeCount'
+  ).textContent =
+    monthly.length+' עיסויים החודש';
+
+  document.getElementById(
+    'homeSpas'
+  ).textContent =
+    spaIds.size+' ספאים';
+
+  // ====================================
+  // 2. REVENUS PAR SPA
+  // ====================================
+
+  const totals = {};
+
+  monthly.forEach(m=>{
+
+    const spa = spas.find(
+      s=>s.id===m.spaId
+    );
+
+    if(!spa) return;
+
+    if(!totals[spa.id]) {
+
+      totals[spa.id] = {
+
+        name:spa.name,
+
+        total:0,
+
+        count:0,
+
+        minutes:0
+
+      };
+
+    }
+
+    totals[spa.id].total +=
+      Number(m.price||0);
+
+    totals[spa.id].count++;
+
+    totals[spa.id].minutes +=
+      Number(m.duration||0);
+
+  });
+
+  // ====================================
+  // 3. CLASSEMENT DES SPAS
+  // ====================================
+
+  const list = document.getElementById(
+    'homeSpaList'
+  );
+
+  const entries = Object.values(totals)
+    .sort((a,b)=>b.total-a.total);
+
+  if(!entries.length) {
+
+    list.innerHTML = `
+      <div class="empty">
+        אין הכנסות החודש
+      </div>
+    `;
+
+    return;
+
+  }
+
+  // ====================================
+  // 4. AFFICHAGE DES REVENUS
+  // ====================================
+
+  list.innerHTML = entries.map((spa,index)=>{
+
+    const percentage = total>0
+      ? Math.round((spa.total/total)*100)
+      : 0;
+
+    return `
+
+      <div class="card">
+
+        <div class="stat-row">
+
+          <strong>
+            ${index+1}. ${escapeHTML(spa.name)}
+          </strong>
+
+          <strong class="total">
+            ${money(roundMoney(spa.total))}
+          </strong>
+
+        </div>
+
+        <div class="progress">
+
+          <div class="progress-fill"
+            style="width:${percentage}%">
+          </div>
+
+        </div>
+
+        <div class="stat-row small">
+
+          <span>${spa.count} עיסויים</span>
+
+          <span>${spa.minutes} דקות</span>
+
+        </div>
+
+        <div class="small">
+          ${percentage}% מכלל ההכנסות
+        </div>
+
+      </div>
+
+    `;
+
+  }).join('');
+
+}
+
+// ======================================
+// 5. STATISTIQUES GENERALES
+// ======================================
+
+function getGeneralStatistics() {
+
+  const totalMassages = massages.length;
+
+  const totalMinutes = massages.reduce(
+    (sum,m)=>sum+Number(m.duration||0),
+    0
+  );
+
+  const totalRevenue = roundMoney(
+    massages.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+  return {
+
+    spas:spas.length,
+
+    massages:totalMassages,
+
+    minutes:totalMinutes,
+
+    revenue:totalRevenue
+
+  };
+
+}
+
+// ======================================
+// 6. REVENUS D'UN MOIS
+// ======================================
+
+function getMonthlyRevenue(month) {
+
+  const records = massages.filter(m=>
+    String(m.date).slice(0,7)===month
+  );
+
+  return roundMoney(
+    records.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+}
+
+// ======================================
+// 7. NOMBRE DE MASSAGES DU MOIS
+// ======================================
+
+function getMonthlyMassageCount(month) {
+
+  return massages.filter(m=>
+    String(m.date).slice(0,7)===month
+  ).length;
+
+}
+
+// ======================================
+// 8. FIN PARTIE 5
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. RAPPORT MENSUEL PAR SPA
+// ======================================
+
+function renderSpaReport() {
+
+  const spaSelect =
+    document.getElementById('reportSpa');
+
+  const monthInput =
+    document.getElementById('reportMonth');
+
+  const report =
+    document.getElementById('spaMonthlyReport');
+
+  if(!spas.length) {
+
+    spaSelect.innerHTML = '';
+
+    report.innerHTML = `
+      <div class="card empty">
+        אין עדיין ספאים רשומים
+      </div>
+    `;
+
+    return;
+  }
+
+  // Conserver le spa sélectionné
+
+  const previousSpa = spaSelect.value;
+
+  spaSelect.innerHTML = spas.map(spa=>`
+
+    <option value="${escapeHTML(spa.id)}">
+      ${escapeHTML(spa.name)}
+    </option>
+
+  `).join('');
+
+  if(spas.some(s=>s.id===previousSpa)) {
+    spaSelect.value = previousSpa;
+  }
+
+  // Mois actuel par défaut
+
+  if(!monthInput.value) {
+    monthInput.value =
+      localDateString().slice(0,7);
+  }
+
+  const spaId = spaSelect.value;
+
+  const selectedMonth = monthInput.value;
+
+  const spa = spas.find(s=>s.id===spaId);
+
+  if(!spa || !selectedMonth) {
+
+    report.innerHTML = `
+      <div class="card empty">
+        נא לבחור ספא וחודש
+      </div>
+    `;
+
+    return;
+  }
+
+  // ====================================
+  // 2. RECUPERATION DES MASSAGES
+  // ====================================
+
+  const records = massages
+
+    .filter(m=>
+      m.spaId===spaId &&
+      String(m.date).slice(0,7)===selectedMonth
+    )
+
+    .sort((a,b)=>{
+
+      const dateCompare =
+        a.date.localeCompare(b.date);
+
+      if(dateCompare!==0) {
+        return dateCompare;
+      }
+
+      return String(a.time||'').localeCompare(
+        String(b.time||'')
+      );
+
+    });
+
+  // ====================================
+  // 3. CALCUL DES STATISTIQUES
+  // ====================================
+
+  const totalCount = records.length;
+
+  const totalMinutes = records.reduce(
+    (sum,m)=>sum+Number(m.duration||0),
+    0
+  );
+
+  const totalRevenue = roundMoney(
+    records.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+  // ====================================
+  // 4. RESUME DU MOIS
+  // ====================================
+
+  let html = `
+
+    <div class="summary">
+
+      <div>דוח חודשי עבור</div>
+
+      <h1>${escapeHTML(spa.name)}</h1>
+
+      <p>חודש: ${escapeHTML(selectedMonth)}</p>
+
+      <div class="divider"></div>
+
+      <div>סך ההכנסות החודש</div>
+
+      <h1>${money(totalRevenue)}</h1>
+
+      <p>${totalCount} עיסויים</p>
+
+      <p>${totalMinutes} דקות עבודה</p>
+
+    </div>
+
+    <div class="card">
+
+      <h3>סיכום החודש</h3>
+
+      <div class="stat-row">
+        <span>שם הספא</span>
+        <strong>${escapeHTML(spa.name)}</strong>
+      </div>
+
+      <div class="stat-row">
+        <span>תשלום לדקה הנוכחי</span>
+        <strong>${money(spa.rate)}</strong>
+      </div>
+
+      <div class="stat-row">
+        <span>מספר עיסויים</span>
+        <strong>${totalCount}</strong>
+      </div>
+
+      <div class="stat-row">
+        <span>סה"כ דקות</span>
+        <strong>${totalMinutes}</strong>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="total">
+        ${money(totalRevenue)}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h3>ניהול העיסויים בחודש זה</h3>
+
+      <label class="check-row">
+
+        <input
+          type="checkbox"
+          id="selectAllReportMassages"
+          onchange="toggleAllReportMassages(this.checked)">
+
+        בחירת כל העיסויים
+
+      </label>
+
+      <button class="main-button"
+        onclick="newMassageForSpa('${escapeHTML(spa.id)}')">
+
+        ➕ הוספת עיסוי לספא זה
+
+      </button>
+
+      <button class="main-button delete"
+        onclick="deleteSelectedMassages()">
+
+        🗑️ מחיקת העיסויים שנבחרו
+
+      </button>
+
+    </div>
+
+    <h3>רשימת העיסויים</h3>
+
+  `;
+
+  // ====================================
+  // 5. LISTE DES MASSAGES
+  // ====================================
+
+  if(records.length===0) {
+
+    html += `
+
+      <div class="card empty">
+        אין עיסויים רשומים לספא זה בחודש הנבחר
+      </div>
+
+    `;
+
+  } else {
+
+    records.forEach(m=>{
+
+      html += `
+
+        <div class="card">
+
+          <label class="check-row">
+
+            <input
+              type="checkbox"
+              class="massage-checkbox"
+              value="${escapeHTML(m.id)}">
+
+            בחירת עיסוי למחיקה
+
+          </label>
+
+          <h3>${escapeHTML(m.type)}</h3>
+
+          <div class="stat-row">
+
+            <span>תאריך הטיפול</span>
+
+            <strong>
+              ${escapeHTML(m.date)}
+            </strong>
+
+          </div>
+
+          <div class="stat-row">
+
+            <span>שעת ביצוע העיסוי</span>
+
+            <strong>
+              ${escapeHTML(m.time || '--:--')}
+            </strong>
+
+          </div>
+
+          <div class="stat-row">
+
+            <span>משך הטיפול</span>
+
+            <strong>
+              ${m.duration} דקות
+            </strong>
+
+          </div>
+
+          <div class="stat-row">
+
+            <span>תשלום לדקה</span>
+
+            <strong>
+              ${money(m.rate)}
+            </strong>
+
+          </div>
+
+          <div class="divider"></div>
+
+          <div>סכום הטיפול</div>
+
+          <h2 class="total">
+            ${money(m.price)}
+          </h2>
+
+          <button class="edit"
+            onclick="editMassage('${escapeHTML(m.id)}')">
+
+            ✏️ עריכה
+
+          </button>
+
+          <button class="delete"
+            onclick="deleteMassage('${escapeHTML(m.id)}')">
+
+            🗑️ מחיקה
+
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+  report.innerHTML = html;
+
+}
+
+// ======================================
+// 6. SELECTION MULTIPLE
+// ======================================
+
+function toggleAllReportMassages(checked) {
+
+  document.querySelectorAll('.massage-checkbox')
+
+    .forEach(checkbox=>{
+
+      checkbox.checked = checked;
+
+    });
+
+}
+
+// ======================================
+// 7. SUPPRESSION MULTIPLE
+// ======================================
+
+function deleteSelectedMassages() {
+
+  const selected = [
+
+    ...document.querySelectorAll(
+      '.massage-checkbox:checked'
+    )
+
+  ].map(el=>el.value);
+
+  if(!selected.length) {
+
+    alert('נא לבחור לפחות עיסוי אחד');
+
+    return;
+  }
+
+  if(!confirm(
+    'למחוק את '+selected.length+' העיסויים שנבחרו?'
+  )) {
+
+    return;
+  }
+
+  massages = massages.filter(
+    m=>!selected.includes(m.id)
+  );
+
+  if(!saveData()) return;
+
+  render();
+
+  alert('העיסויים שנבחרו נמחקו בהצלחה!');
+
+}
+
+// ======================================
+// 8. RAPPORT ANNUEL PAR SPA
+// ======================================
+
+function renderYearlySpaReport(spaId,year) {
+
+  const spa = spas.find(s=>s.id===spaId);
+
+  if(!spa) return null;
+
+  const records = massages.filter(m=>
+    m.spaId===spaId &&
+    String(m.date).slice(0,4)===String(year)
+  );
+
+  const totalCount = records.length;
+
+  const totalMinutes = records.reduce(
+    (sum,m)=>sum+Number(m.duration||0),
+    0
+  );
+
+  const totalRevenue = roundMoney(
+    records.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+  return {
+
+    spa:spa.name,
+
+    year:year,
+
+    count:totalCount,
+
+    minutes:totalMinutes,
+
+    revenue:totalRevenue
+
+  };
+
+}
+
+// ======================================
+// FIN PARTIE 6
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. CREATION D'UN FICHIER CSV
+// ======================================
+
+function downloadCSV(rows,filename) {
+
+  const csv = '\uFEFF' + rows.map(row=>
+
+    row.map(value=>
+
+      '"' + String(value ?? '')
+        .replace(/"/g,'""') + '"'
+
+    ).join(';')
+
+  ).join('\r\n');
+
+  const blob = new Blob(
+    [csv],
+    {type:'text/csv;charset=utf-8;'}
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = filename;
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  setTimeout(()=>{
+    URL.revokeObjectURL(url);
+  },1000);
+
+}
+
+// ======================================
+// 2. EXPORT DU RAPPORT MENSUEL PAR SPA
+// ======================================
+
+function exportSpaReport() {
+
+  const spaId =
+    document.getElementById('reportSpa').value;
+
+  const month =
+    document.getElementById('reportMonth').value;
+
+  const spa = spas.find(s=>s.id===spaId);
+
+  if(!spa || !month) {
+
+    alert('נא לבחור ספא וחודש');
+
+    return;
+  }
+
+  const records = massages.filter(m=>
+    m.spaId===spaId &&
+    String(m.date).slice(0,7)===month
+  );
+
+  if(!records.length) {
+
+    alert('אין נתונים לייצוא');
+
+    return;
+  }
+
+  // En-tête du fichier
+
+  const rows = [
+
+    ['SpaConnect'],
+
+    ['Spa',spa.name],
+
+    ['Month',month],
+
+    [],
+
+    [
+      'Date',
+      'Time',
+      'Massage',
+      'Duration',
+      'Rate per minute',
+      'Amount'
+    ]
+
+  ];
+
+  // Détails des massages
+
+  records.forEach(m=>{
+
+    rows.push([
+
+      m.date,
+
+      m.time || '',
+
+      m.type,
+
+      m.duration,
+
+      m.rate,
+
+      m.price
+
+    ]);
+
+  });
+
+  // Calcul des totaux
+
+  const totalMinutes = records.reduce(
+    (sum,m)=>sum+Number(m.duration||0),
+    0
+  );
+
+  const totalRevenue = roundMoney(
+    records.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+  rows.push([]);
+
+  rows.push([
+
+    'TOTAL',
+
+    '',
+
+    records.length+' massages',
+
+    totalMinutes,
+
+    '',
+
+    totalRevenue
+
+  ]);
+
+  downloadCSV(
+
+    rows,
+
+    'SpaConnect_'+spa.name+'_'+month+'.csv'
+
+  );
+
+}
+
+// ======================================
+// 3. EXPORT DE TOUS LES MASSAGES
+// ======================================
+
+function exportAllMassages() {
+
+  if(!massages.length) {
+
+    alert('אין נתונים לייצוא');
+
+    return;
+  }
+
+  const rows = [
+
+    ['SpaConnect - All Massages'],
+
+    [],
+
+    [
+      'Spa',
+      'Date',
+      'Time',
+      'Massage',
+      'Duration',
+      'Rate per minute',
+      'Amount'
+    ]
+
+  ];
+
+  massages
+    .slice()
+    .sort((a,b)=>{
+
+      const dateCompare =
+        String(a.date).localeCompare(String(b.date));
+
+      if(dateCompare!==0) return dateCompare;
+
+      return String(a.time||'').localeCompare(
+        String(b.time||'')
+      );
+
+    })
+    .forEach(m=>{
+
+      const spa = spas.find(s=>s.id===m.spaId);
+
+      rows.push([
+
+        spa ? spa.name : 'Spa supprimé',
+
+        m.date,
+
+        m.time || '',
+
+        m.type,
+
+        m.duration,
+
+        m.rate,
+
+        m.price
+
+      ]);
+
+    });
+
+  // Total général
+
+  const totalMinutes = massages.reduce(
+    (sum,m)=>sum+Number(m.duration||0),
+    0
+  );
+
+  const totalRevenue = roundMoney(
+    massages.reduce(
+      (sum,m)=>sum+Number(m.price||0),
+      0
+    )
+  );
+
+  rows.push([]);
+
+  rows.push([
+
+    'TOTAL',
+
+    '',
+
+    '',
+
+    massages.length+' massages',
+
+    totalMinutes,
+
+    '',
+
+    totalRevenue
+
+  ]);
+
+  downloadCSV(
+    rows,
+    'SpaConnect_Tous_les_Massages.csv'
+  );
+
+}
+
+// ======================================
+// 4. FIN PARTIE 7
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. EXPORTER UNE SAUVEGARDE
+// ======================================
+
+function exportBackup() {
+
+  const backup = {
+
+    application: 'SpaConnect',
+
+    version: 1,
+
+    exportDate: new Date().toISOString(),
+
+    spas: spas,
+
+    massages: massages
+
+  };
+
+  const blob = new Blob(
+
+    [JSON.stringify(backup,null,2)],
+
+    {type:'application/json'}
+
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+
+  a.href = url;
+
+  a.download =
+    'SpaConnect_Backup_' +
+    localDateString() +
+    '.json';
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  setTimeout(()=>{
+
+    URL.revokeObjectURL(url);
+
+  },1000);
+
+  alert('הגיבוי נשמר בהצלחה!');
+
+}
+
+// ======================================
+// 2. IMPORTER UNE SAUVEGARDE
+// ======================================
+
+function importBackup(event) {
+
+  const file = event.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function() {
+
+    try {
+
+      const data = JSON.parse(reader.result);
+
+      // Vérification du fichier
+
+      if(
+
+        !data ||
+
+        !Array.isArray(data.spas) ||
+
+        !Array.isArray(data.massages)
+
+      ) {
+
+        throw new Error('Invalid backup');
+
+      }
+
+      // Vérification des données des spas
+
+      const validSpas = data.spas.every(spa=>
+
+        spa &&
+
+        typeof spa.id === 'string' &&
+
+        typeof spa.name === 'string' &&
+
+        Number.isFinite(Number(spa.rate))
+
+      );
+
+      // Vérification des données des massages
+
+      const validMassages = data.massages.every(m=>
+
+        m &&
+
+        typeof m.id === 'string' &&
+
+        typeof m.spaId === 'string' &&
+
+        typeof m.date === 'string' &&
+
+        Number.isFinite(Number(m.duration)) &&
+
+        Number.isFinite(Number(m.price))
+
+      );
+
+      if(!validSpas || !validMassages) {
+
+        throw new Error('Invalid data');
+
+      }
+
+      // Vérifier que les spas des massages existent
+
+      const spaIds = new Set(
+        data.spas.map(s=>s.id)
+      );
+
+      if(data.massages.some(m=>!spaIds.has(m.spaId))) {
+
+        throw new Error('Unknown spa');
+
+      }
+
+      if(!confirm(
+
+        'האם להחליף את הנתונים הקיימים בגיבוי?'
+
+      )) {
+
+        return;
+
+      }
+
+      // Restaurer les données
+
+      spas = data.spas;
+
+      massages = data.massages.map(m=>({
+
+        ...m,
+
+        time: m.time || ''
+
+      }));
+
+      saveData();
+
+      render();
+
+      showPage('home');
+
+      alert('הנתונים שוחזרו בהצלחה!');
+
+    }
+
+    catch(error) {
+
+      alert('קובץ הגיבוי אינו תקין');
+
+    }
+
+    finally {
+
+      event.target.value = '';
+
+    }
+
+  };
+
+  reader.readAsText(file);
+
+}
+
+// ======================================
+// 3. SUPPRIMER TOUTES LES DONNEES
+// ======================================
+
+function deleteAllData() {
+
+  if(!confirm(
+
+    'למחוק את כל הספאים והעיסויים?'
+
+  )) return;
+
+  if(!confirm(
+
+    'אישור סופי למחיקת כל הנתונים?'
+
+  )) return;
+
+  spas = [];
+
+  massages = [];
+
+  saveData();
+
+  resetSpaForm();
+
+  document.getElementById(
+    'editingMassageId'
+  ).value = '';
+
+  render();
+
+  showPage('home');
+
+  alert('כל הנתונים נמחקו בהצלחה!');
+
+}
+
+// ======================================
+// 4. FIN PARTIE 8
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. HISTORIQUE COMPLET DES MASSAGES
+// ======================================
+
+function renderMassageHistory() {
+
+  const records = massages.slice().sort((a,b)=>{
+
+    const dateCompare =
+      String(b.date).localeCompare(String(a.date));
+
+    if(dateCompare !== 0) return dateCompare;
+
+    return String(b.time || '').localeCompare(
+      String(a.time || '')
+    );
+
+  });
+
+  return records.map(m=>{
+
+    const spa = spas.find(s=>s.id===m.spaId);
+
+    return {
+
+      id:m.id,
+
+      spa:spa ? spa.name : 'Spa supprimé',
+
+      type:m.type,
+
+      date:m.date,
+
+      time:m.time || '--:--',
+
+      duration:m.duration,
+
+      price:m.price
+
+    };
+
+  });
+
+}
+
+// ======================================
+// 2. RECHERCHER UN MASSAGE
+// ======================================
+
+function searchMassages(searchValue) {
+
+  const search = String(searchValue || '')
+    .trim()
+    .toLowerCase();
+
+  if(!search) return massages;
+
+  return massages.filter(m=>{
+
+    const spa = spas.find(s=>s.id===m.spaId);
+
+    return (
+
+      String(m.type || '').toLowerCase()
+        .includes(search) ||
+
+      String(m.date || '').includes(search) ||
+
+      String(m.time || '').includes(search) ||
+
+      String(spa?.name || '').toLowerCase()
+        .includes(search)
+
+    );
+
+  });
+
+}
+
+// ======================================
+// 3. RAPPORT ANNUEL
+// ======================================
+
+function getAnnualSpaReport(spaId,year) {
+
+  const spa = spas.find(s=>s.id===spaId);
+
+  if(!spa) return null;
+
+  const records = massages.filter(m=>
+
+    m.spaId === spaId &&
+
+    String(m.date).slice(0,4) === String(year)
+
+  );
+
+  const count = records.length;
+
+  const minutes = records.reduce(
+
+    (sum,m)=>sum+Number(m.duration || 0),
+
+    0
+
+  );
+
+  const revenue = roundMoney(
+
+    records.reduce(
+
+      (sum,m)=>sum+Number(m.price || 0),
+
+      0
+
+    )
+
+  );
+
+  return {
+
+    spa:spa.name,
+
+    year:year,
+
+    count:count,
+
+    minutes:minutes,
+
+    revenue:revenue
+
+  };
+
+}
+
+// ======================================
+// 4. REVENUS ANNUELS DE TOUS LES SPAS
+// ======================================
+
+function getAllAnnualReports(year) {
+
+  return spas.map(spa=>{
+
+    return getAnnualSpaReport(spa.id,year);
+
+  });
+
+}
+
+// ======================================
+// 5. VERIFICATION DES DONNEES
+// ======================================
+
+function validateSpaData() {
+
+  const errors = [];
+
+  spas.forEach(spa=>{
+
+    if(!spa.id || !spa.name) {
+
+      errors.push('Spa avec informations manquantes');
+
+    }
+
+    if(!Number.isFinite(Number(spa.rate))) {
+
+      errors.push('Tarif incorrect pour '+spa.name);
+
+    }
+
+  });
+
+  massages.forEach(m=>{
+
+    if(!m.id || !m.spaId) {
+
+      errors.push('Massage avec informations manquantes');
+
+    }
+
+    if(!spas.some(s=>s.id===m.spaId)) {
+
+      errors.push('Massage associé à un spa inexistant');
+
+    }
+
+    if(!m.date) {
+
+      errors.push('Date de massage manquante');
+
+    }
+
+    if(m.time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(m.time)) {
+
+      errors.push('Heure incorrecte pour le massage '+m.id);
+
+    }
+
+  });
+
+  return errors;
+
+}
+
+// ======================================
+// 6. AFFICHER LE RESULTAT DE VERIFICATION
+// ======================================
+
+function checkApplicationData() {
+
+  const errors = validateSpaData();
+
+  if(errors.length) {
+
+    alert(
+      'Problèmes détectés :\n\n' +
+      errors.join('\n')
+    );
+
+    return false;
+
+  }
+
+  alert('Toutes les données sont correctes !');
+
+  return true;
+
+}
+
+// ======================================
+// 7. ACTUALISATION GENERALE
+// ======================================
+
+function refreshApplication() {
+
+  renderSpas();
+
+  renderHome();
+
+  renderSpaReport();
+
+  updateSpaPreview();
+
+  updateMassagePrice();
+
+}
+
+// ======================================
+// 8. FIN PARTIE 9
+// ======================================
+
+</script>
+
+<script>
+
+// ======================================
+// 1. SAUVEGARDE SECURISEE
+// ======================================
+
+function saveData() {
+
+  try {
+
+    localStorage.setItem(
+      'spa_spas',
+      JSON.stringify(spas)
+    );
+
+    localStorage.setItem(
+      'spa_massages',
+      JSON.stringify(massages)
+    );
+
+    return true;
+
+  } catch(error) {
+
+    alert(
+      'Erreur lors de la sauvegarde des données.'
+    );
+
+    return false;
+
+  }
+
+}
+
+// ======================================
+// 2. EVENEMENTS DU FORMULAIRE SPA
+// ======================================
+
+document.getElementById('spaRate')
+  .addEventListener('input',function() {
+
+    updateSpaPreview();
+
+  });
+
+// ======================================
+// 3. EVENEMENTS DU FORMULAIRE MASSAGE
+// ======================================
+
+document.getElementById('massageSpa')
+  .addEventListener('change',function() {
+
+    updateMassagePrice();
+
+  });
+
+document.getElementById('massageDuration')
+  .addEventListener('change',function() {
+
+    updateMassagePrice();
+
+  });
+
+// ======================================
+// 4. EVENEMENTS DES RAPPORTS
+// ======================================
+
+document.getElementById('reportSpa')
+  .addEventListener('change',function() {
+
+    renderSpaReport();
+
+  });
+
+document.getElementById('reportMonth')
+  .addEventListener('change',function() {
+
+    renderSpaReport();
+
+  });
+
+// ======================================
+// 5. INITIALISATION DES DATES
+// ======================================
+
+document.getElementById('massageDate').value =
+  localDateString();
+
+document.getElementById('reportMonth').value =
+  localDateString().slice(0,7);
+
+// ======================================
+// 6. INITIALISATION DE L'HEURE
+// ======================================
+
+function initializeMassageTime() {
+
+  const timeInput = document.getElementById(
+    'massageTime'
+  );
+
+  if(!timeInput) return;
+
+  const now = new Date();
+
+  timeInput.value =
+
+    String(now.getHours()).padStart(2,'0') +
+
+    ':' +
+
+    String(now.getMinutes()).padStart(2,'0');
+
+}
+
+// ======================================
+// 7. AFFICHAGE GENERAL
+// ======================================
+
+function render() {
+
+  renderSpas();
+
+  renderHome();
+
+  updateSpaPreview();
+
+  updateMassagePrice();
+
+  renderSpaReport();
+
+}
+
+// ======================================
+// 8. DEMARRAGE DE L'APPLICATION
+// ======================================
+
+function startSpaConnect() {
+
+  initializeMassageTime();
+
+  render();
+
+  showPage('home');
+
+  console.log('SpaConnect démarré avec succès');
+
+}
+
+// ======================================
+// 9. LANCEMENT
+// ======================================
+
+startSpaConnect();
+
+// ======================================
+// FIN DE SPA CONNECT
+// ======================================
+
+</script>
